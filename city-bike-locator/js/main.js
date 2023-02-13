@@ -7,12 +7,9 @@ function pythagoreanTheoremCalc(a, b, resultType) {
 }
 
 function coordinateDistCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
-  latCoordA += 90;
-  latCoordB += 90;
-  longCoordA += 180;
-  longCoordB += 180;
-
   // Fix distance calculation: Distance between coordinate degrees is not constant everywhere.
+  let r = 0;
+  const d = 2 * r * Math.asin;
 
   return pythagoreanTheoremCalc(
     Math.abs(latCoordA - latCoordB),
