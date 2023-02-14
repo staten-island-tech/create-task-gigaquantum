@@ -6,16 +6,19 @@
     <title>City Bike Locator</title>
   </head>
   <body>
-    <div class="inputs">
+    <div class="user-inputs">
       <h2>Your Location Coordinates:</h2>
-      <label for="latitude-input">Latitude:</label>
+      <label for="latitude-input">Latitude (Decimal Form):</label>
       <input type="number" name="latitude-input" id="latitude-input" />
       <br />
-      <label for="longitude-input">Longitude:</label>
+      <label for="longitude-input">Longitude (Decimal Form):</label>
       <input type="number" name="longitude-input" id="longitude-input" />
       <br /><br />
-      <label for="distance-input">Maximum Distance:</label>
+      <label for="distance-input">Maximum Distance (in Kilometers):</label>
       <input type="number" name="distance-input" id="distance-input" />
+      <br />
+      <button class="btn" id="submit-btn">Submit</button>
+      <button class="btn" id="reset-btn">Reset</button>
     </div>
   </body>
   <script type="module" src="js/functions.js"></script>

@@ -1,26 +1,45 @@
-function pythagoreanTheoremCalc(a, b, resultType) {
-  if (resultType == "base") {
-    return Math.sqrt(a ** 2 + b ** 2);
-  } else if (resultType == "hypotenuse") {
-    return Math.sqrt(Math.abs(a ** 2 - b ** 2));
-  }
+function sineSquared(x) {
+  return (1 - Math.cos(2 * x)) / 2;
 }
 
-function coordinateDistCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
-  // Fix distance calculation: Distance between coordinate degrees is not constant everywhere.
-  let r = 0;
-  const d = 2 * r * Math.asin;
-
-  return pythagoreanTheoremCalc(
-    Math.abs(latCoordA - latCoordB),
-    Math.abs(longCoordA - longCoordB),
-    "hypotenuse"
-  );
+function coordinateDistanceCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
+  let radius = 6371; // Average Radius of the Earth (in Kilometers)
+  const distance =
+    2 *
+    radius *
+    Math.asin(
+      Math.sqrt(
+        sineSquared((latCoordB - latCoordA) / 2) +
+          Math.cos(latCoordA) *
+            Math.cos(latCoordB) *
+            sineSquared((longCoordB - longCoordA) / 2)
+      )
+    ); // Haversine Formula
+  return distance;
 }
 
 // --------------------------------------------------------------------------------
 
 // import "css/style.css";
-import { apiData } from "./api.js";
+import { apiFunctions } from "./functions";
 
-apiData.then((data) => console.log(data.networks));
+const apiData = apiFunctions.fetchAPI("http://api.citybik.es/v2/networks");
+
+let userLatitude = -74.044752;
+let userLongitude = 40.689214;
+
+apiData.then((data) => {
+  console.log(data.networks);
+  data.networks.forEach((element) => {
+    element.location.userDistance = coordinateDistanceCalc(
+      element.location.latitude,
+      element.location.longitude,
+      userLatitude,
+      userLongitude
+    );
+  });
+  const sortedArray = data.networks.sort(function (a, b) {
+    return a.location.userDistance - b.location.userDistance;
+  }); // Array not sorting properly
+  console.log(sortedArray);
+});
