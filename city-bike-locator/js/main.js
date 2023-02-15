@@ -49,4 +49,5 @@ apiData.then((data) => {
 
 function addCard(distance, latitude, longitude, name, city, brand) {
   console.log(distance, latitude, longitude, name, city, brand);
+  // Complete this function later
 }
