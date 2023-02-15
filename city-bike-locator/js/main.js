@@ -1,5 +1,5 @@
 function sineSquared(x) {
-  return ((1 - Math.cos(2 * x)) / 2);
+  return (1 - Math.cos(2 * x)) / 2;
 }
 
 function coordinateDistanceCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
@@ -10,9 +10,9 @@ function coordinateDistanceCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
     Math.asin(
       Math.sqrt(
         sineSquared((latCoordB - latCoordA) / 2) +
-          (Math.cos(latCoordA) *
+          Math.cos(latCoordA) *
             Math.cos(latCoordB) *
-            sineSquared((longCoordB - longCoordA) / 2))
+            sineSquared((longCoordB - longCoordA) / 2)
       )
     ); // Haversine Formula
   return distance;
@@ -43,6 +43,10 @@ apiData.then((data) => {
   });
   const sortedArray = data.networks.sort(
     (a, b) => a.location.userDistance - b.location.userDistance
-  ); // Array not sorting properly. Array not sorting at all. Why??!!
+  ); // Array not sorting at all. Why??!!
   console.log(sortedArray);
 });
+
+function addCard(distance, latitude, longitude, name, city, brand) {
+  console.log(distance, latitude, longitude, name, city, brand);
+}
