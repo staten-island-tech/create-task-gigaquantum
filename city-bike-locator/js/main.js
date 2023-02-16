@@ -14,7 +14,7 @@ function coordinateDistanceCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
             Math.cos(latCoordB) *
             sineSquared((longCoordB - longCoordA) / 2)
       )
-    ); // Haversine Formula
+    ); // Haversine Formula: Math is incorrect. Must fix math.
   return distance;
 }
 
@@ -25,8 +25,17 @@ import { apiFunctions } from "./functions";
 
 const apiData = apiFunctions.fetchAPI("http://api.citybik.es/v2/networks");
 
-let userLatitude = 13.75;
-let userLongitude = 100.516667;
+const userLatitude = 40.731672;
+const userLongitude = -73.977477;
+
+console.log(
+  coordinateDistanceCalc(
+    40.6892748550208,
+    -74.04457957845808,
+    40.748441410666224,
+    -73.98566372649938
+  )
+);
 
 apiData.then((data) => {
   console.log(data.networks);
@@ -43,7 +52,7 @@ apiData.then((data) => {
   });
   const sortedArray = data.networks.sort(
     (a, b) => a.location.userDistance - b.location.userDistance
-  ); // Array not sorting at all. Why??!!
+  );
   console.log(sortedArray);
 });
 
