@@ -25,8 +25,8 @@ import { apiFunctions } from "./functions";
 
 const apiData = apiFunctions.fetchAPI("http://api.citybik.es/v2/networks");
 
-let userLatitude = -74.044752;
-let userLongitude = 40.689214;
+let userLatitude = 13.75;
+let userLongitude = 100.516667;
 
 apiData.then((data) => {
   console.log(data.networks);
