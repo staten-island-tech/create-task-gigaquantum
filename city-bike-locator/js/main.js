@@ -31,6 +31,12 @@ function formatArray(array, property, radius) {
   return sortedArray;
 }
 
+const DOMSelectors = {
+  userLatitude: document.getElementById("latitude-input").value,
+  userLongitude: document.getElementById("longitude-input").value,
+  searchRadius: document.getElementById("distance-input").value,
+};
+
 // --------------------------------------------------------------------------------
 
 // import "css/style.css";
@@ -38,26 +44,23 @@ import { apiFunctions } from "./functions";
 
 const apiData = apiFunctions.fetchAPI("http://api.citybik.es/v2/networks");
 
-const userLatitude = 40.731672;
-const userLongitude = -73.977477;
-const searchRadius = 100;
-
 apiData.then((data) => {
   data.networks.forEach((element) => {
     element.location.userDistance = coordinateDistanceCalc(
       element.location.latitude,
       element.location.longitude,
-      userLatitude,
-      userLongitude
+      DOMSelectors.userLatitude,
+      DOMSelectors.userLongitude
     );
   });
   const sortedArray = data.networks.sort(
     (a, b) => a.location.userDistance - b.location.userDistance
   );
+
   return sortedArray;
 });
 
-console.log(sortedArray);
+// console.log(sortedArray);
 
 function addCard(distance, latitude, longitude, name, city, brand) {
   console.log(distance, latitude, longitude, name, city, brand);
