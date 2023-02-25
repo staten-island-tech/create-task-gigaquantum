@@ -9,10 +9,22 @@
     <div class="user-inputs">
       <h2>Your Location Coordinates:</h2>
       <label for="latitude-input">Latitude (Decimal Form):</label>
-      <input type="number" name="latitude-input" id="latitude-input" />
+      <input
+        type="number"
+        min="-90"
+        max="90"
+        name="latitude-input"
+        id="latitude-input"
+      />
       <br />
       <label for="longitude-input">Longitude (Decimal Form):</label>
-      <input type="number" name="longitude-input" id="longitude-input" />
+      <input
+        type="number"
+        min="-180"
+        max="180"
+        name="longitude-input"
+        id="longitude-input"
+      />
       <br /><br />
       <label for="distance-input">Search Radius (in Kilometers):</label>
       <input type="number" name="distance-input" id="distance-input" />
@@ -20,6 +32,7 @@
       <button class="btn" id="submit-btn">Submit</button>
       <button class="btn" id="reset-btn">Reset</button>
     </div>
+    <p id="results"></p>
   </body>
   <script type="module" src="js/functions.js"></script>
   <script type="module" src="js/main.js"></script>

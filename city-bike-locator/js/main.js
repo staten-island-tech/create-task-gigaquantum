@@ -27,37 +27,66 @@ function coordinateDistanceCalc(latCoordA, longCoordA, latCoordB, longCoordB) {
 function formatArray(array, property, radius) {
   const sortedArray = array
     .sort((a, b) => a[property] - b[property])
-    .filter((element) => bikeStation[property] <= radius);
+    .filter((element) => element[property] <= radius);
   return sortedArray;
 }
 
 const DOMSelectors = {
-  userLatitude: document.getElementById("latitude-input").value,
-  userLongitude: document.getElementById("longitude-input").value,
-  searchRadius: document.getElementById("distance-input").value,
+  userLatitude: 40.6892, // document.getElementById("latitude-input"),
+  userLongitude: -74.0445, // document.getElementById("longitude-input"),
+  searchRadius: 100, // document.getElementById("distance-input"),
+  submitBtn: document.getElementById("submit-btn"),
+  resetBtn: document.getElementById("reset-btn"),
+  inputElements: document.querySelectorAll("input"),
 };
+
+function resetInputFields() {
+  DOMSelectors.inputElements.forEach((element) => {
+    element.value = null;
+  });
+}
+
+DOMSelectors.resetBtn.addEventListener("click", function () {
+  resetInputFields();
+});
 
 // --------------------------------------------------------------------------------
 
 // import "css/style.css";
 import { apiFunctions } from "./functions";
 
-const apiData = apiFunctions.fetchAPI("http://api.citybik.es/v2/networks");
-
-apiData.then((data) => {
+apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
   data.networks.forEach((element) => {
     element.location.userDistance = coordinateDistanceCalc(
       element.location.latitude,
       element.location.longitude,
-      DOMSelectors.userLatitude,
-      DOMSelectors.userLongitude
+      DOMSelectors.userLatitude, //.value,
+      DOMSelectors.userLongitude //.value
     );
   });
   const sortedArray = data.networks.sort(
     (a, b) => a.location.userDistance - b.location.userDistance
   );
 
-  return sortedArray;
+  let bikeStationArray = [];
+
+  DOMSelectors.submitBtn.addEventListener("click", function () {
+    data.networks
+      .filter(
+        (element) => element.location.userDistance <= DOMSelectors.searchRadius //.value
+      )
+      .forEach((filteredElement) => {
+        apiFunctions
+          .fetchAPI(`http://api.citybik.es/v2/networks/${filteredElement.id}`)
+          .then((newData) => {
+            console.log(newData);
+            bikeStationArray = bikeStationArray.concat(newData);
+          });
+      })
+      .then((bikeStationArray) => {
+        console.log(bikeStationArray);
+      });
+  });
 });
 
 // console.log(sortedArray);
