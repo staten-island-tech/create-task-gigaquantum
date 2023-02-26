@@ -32,12 +32,13 @@ function formatArray(array, property, radius) {
 }
 
 const DOMSelectors = {
-  userLatitude: 40.6892, // document.getElementById("latitude-input"),
-  userLongitude: -74.0445, // document.getElementById("longitude-input"),
-  searchRadius: 100, // document.getElementById("distance-input"),
+  userLatitude: document.getElementById("latitude-input"),
+  userLongitude: document.getElementById("longitude-input"),
+  searchRadius: document.getElementById("distance-input"),
   submitBtn: document.getElementById("submit-btn"),
   resetBtn: document.getElementById("reset-btn"),
   inputElements: document.querySelectorAll("input"),
+  resultTable: document.getElementById("result-table"),
 };
 
 function resetInputFields() {
@@ -50,48 +51,152 @@ DOMSelectors.resetBtn.addEventListener("click", function () {
   resetInputFields();
 });
 
-// --------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // import "css/style.css";
 import { apiFunctions } from "./functions";
 
 apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
-  data.networks.forEach((element) => {
-    element.location.userDistance = coordinateDistanceCalc(
-      element.location.latitude,
-      element.location.longitude,
-      DOMSelectors.userLatitude, //.value,
-      DOMSelectors.userLongitude //.value
-    );
-  });
-  const sortedArray = data.networks.sort(
-    (a, b) => a.location.userDistance - b.location.userDistance
-  );
-
-  let bikeStationArray = [];
-
   DOMSelectors.submitBtn.addEventListener("click", function () {
-    data.networks
-      .filter(
-        (element) => element.location.userDistance <= DOMSelectors.searchRadius //.value
-      )
-      .forEach((filteredElement) => {
-        apiFunctions
-          .fetchAPI(`http://api.citybik.es/v2/networks/${filteredElement.id}`)
-          .then((newData) => {
-            console.log(newData);
-            bikeStationArray = bikeStationArray.concat(newData);
-          });
-      })
-      .then((bikeStationArray) => {
-        console.log(bikeStationArray);
+    DOMSelectors.submitBtn.disabled = true;
+    DOMSelectors.resetBtn.disabled = true;
+
+    let userData = {};
+    userData.latitude = DOMSelectors.userLatitude.value;
+    userData.longitude = DOMSelectors.userLongitude.value;
+    userData.searchRadius = DOMSelectors.searchRadius.value;
+
+    data.networks.forEach((element) => {
+      element.location.userDistance = coordinateDistanceCalc(
+        element.location.latitude,
+        element.location.longitude,
+        userData.latitude,
+        userData.longitude
+      );
+    });
+
+    DOMSelectors.resultTable.childNodes.forEach((child) => child.remove());
+    let apiCallArray = [];
+
+    if (
+      data.networks.filter(
+        (element) => element.location.userDistance <= userData.searchRadius
+      ).length == 0
+    ) {
+      alert(
+        "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
+      );
+      DOMSelectors.submitBtn.disabled = false;
+      DOMSelectors.resetBtn.disabled = false;
+      return;
+    } else {
+      data.networks
+        .filter(
+          (element) => element.location.userDistance <= userData.searchRadius //.value
+        )
+        .forEach((filteredElement) => {
+          apiCallArray.push(
+            apiFunctions.fetchAPI(
+              `http://api.citybik.es/v2/networks/${filteredElement.id}`
+            )
+          );
+        });
+    }
+
+    Promise.all(apiCallArray).then((responseArrays) => {
+      let bikeStationArray = [];
+      responseArrays.forEach((networkArray) => {
+        networkArray.network.stations.forEach((bikeStation) => {
+          bikeStation.networkBrand = networkArray.network.name;
+        });
+        bikeStationArray = bikeStationArray.concat(
+          networkArray.network.stations
+        );
       });
+
+      bikeStationArray.forEach((bikeStation) => {
+        bikeStation.userDistance = coordinateDistanceCalc(
+          bikeStation.latitude,
+          bikeStation.longitude,
+          userData.latitude,
+          userData.longitude
+        );
+      });
+
+      const formattedBikeStationArray = bikeStationArray.formatArray(
+        bikeStationArray,
+        "userDistance",
+        userData.searchRadius
+      );
+
+      if (formattedBikeStationArray.length == 0) {
+        alert(
+          "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
+        );
+        DOMSelectors.submitBtn.disabled = false;
+        DOMSelectors.resetBtn.disabled = false;
+        return;
+      } else {
+        DOMSelectors.resultTable.insertAdjacentHTML(
+          "beforeend",
+          `
+        <tr>
+        <th>Network Brand</th>
+        <th>Location Name</th>
+        <th>Available Bikes</th>
+        <th>Empty Bike Slots</th>
+        <th>
+          Distance From <br />
+          Your Location
+        </th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+      </tr>
+      `
+        );
+
+        formattedBikeStationArray.forEach((bikeStation) => {
+          addBikeStationRow(
+            bikeStation.networkBrand,
+            bikeStation.name,
+            bikeStation.free_bikes,
+            bikeStation.empty_slots,
+            bikeStation.userDistance,
+            bikeStation.latitude,
+            bikeStation.longitude
+          );
+        });
+      }
+    });
+
+    DOMSelectors.submitBtn.disabled = false;
+    DOMSelectors.resetBtn.disabled = false;
   });
 });
 
 // console.log(sortedArray);
 
-function addCard(distance, latitude, longitude, name, city, brand) {
-  console.log(distance, latitude, longitude, name, city, brand);
-  // Complete this function later
+function addBikeStationRow(
+  networkBrand,
+  locationName,
+  availableBikes,
+  emptyBikeSlots,
+  distanceFromUser,
+  latitude,
+  longitude
+) {
+  DOMSelectors.resultTable.insertAdjacentHTML(
+    "beforeend",
+    `
+    <tr>
+        <td>${networkBrand}</td>
+        <td>${locationName}</td>
+        <td>${availableBikes}</td>
+        <td>${emptyBikeSlots}</td>
+        <td>${distanceFromUser}</td>
+        <td>${latitude}</td>
+        <td>${longitude}</td>
+      </tr>
+  `
+  );
 }
