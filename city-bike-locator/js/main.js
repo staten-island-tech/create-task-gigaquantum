@@ -53,7 +53,7 @@ DOMSelectors.resetBtn.addEventListener("click", function () {
 
 // ----------------------------------------------------------------------------
 
-// import "css/style.css";
+import "../styles/style.css";
 import { apiFunctions } from "./functions";
 
 apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
@@ -61,75 +61,39 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
     DOMSelectors.submitBtn.disabled = true;
     DOMSelectors.resetBtn.disabled = true;
 
-    let userData = {};
-    userData.latitude = DOMSelectors.userLatitude.value;
-    userData.longitude = DOMSelectors.userLongitude.value;
-    userData.searchRadius = DOMSelectors.searchRadius.value;
-
-    data.networks.forEach((element) => {
-      element.location.userDistance = coordinateDistanceCalc(
-        element.location.latitude,
-        element.location.longitude,
-        userData.latitude,
-        userData.longitude
-      );
-    });
-
     DOMSelectors.resultTable.childNodes.forEach((child) => child.remove());
-    let apiCallArray = [];
 
     if (
-      data.networks.filter(
-        (element) => element.location.userDistance <= userData.searchRadius
-      ).length == 0
+      DOMSelectors.userLatitude.value == null ||
+      DOMSelectors.userLongitude.value == null ||
+      DOMSelectors.searchRadius.value == null
     ) {
-      alert(
-        "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
-      );
+      alert("Please fill out all input fields and try again.");
       DOMSelectors.submitBtn.disabled = false;
       DOMSelectors.resetBtn.disabled = false;
       return;
     } else {
-      data.networks
-        .filter(
-          (element) => element.location.userDistance <= userData.searchRadius //.value
-        )
-        .forEach((filteredElement) => {
-          apiCallArray.push(
-            apiFunctions.fetchAPI(
-              `http://api.citybik.es/v2/networks/${filteredElement.id}`
-            )
-          );
-        });
-    }
+      let userData = {};
+      userData.latitude = DOMSelectors.userLatitude.value;
+      userData.longitude = DOMSelectors.userLongitude.value;
+      userData.searchRadius = DOMSelectors.searchRadius.value;
 
-    Promise.all(apiCallArray).then((responseArrays) => {
-      let bikeStationArray = [];
-      responseArrays.forEach((networkArray) => {
-        networkArray.network.stations.forEach((bikeStation) => {
-          bikeStation.networkBrand = networkArray.network.name;
-        });
-        bikeStationArray = bikeStationArray.concat(
-          networkArray.network.stations
-        );
-      });
-
-      bikeStationArray.forEach((bikeStation) => {
-        bikeStation.userDistance = coordinateDistanceCalc(
-          bikeStation.latitude,
-          bikeStation.longitude,
+      data.networks.forEach((element) => {
+        element.location.userDistance = coordinateDistanceCalc(
+          element.location.latitude,
+          element.location.longitude,
           userData.latitude,
           userData.longitude
         );
       });
 
-      const formattedBikeStationArray = bikeStationArray.formatArray(
-        bikeStationArray,
-        "userDistance",
-        userData.searchRadius
-      );
+      let apiCallArray = [];
 
-      if (formattedBikeStationArray.length == 0) {
+      if (
+        data.networks.filter(
+          (element) => element.location.userDistance <= userData.searchRadius
+        ).length == 0
+      ) {
         alert(
           "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
         );
@@ -137,9 +101,58 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
         DOMSelectors.resetBtn.disabled = false;
         return;
       } else {
-        DOMSelectors.resultTable.insertAdjacentHTML(
-          "beforeend",
-          `
+        data.networks
+          .filter(
+            (element) => element.location.userDistance <= userData.searchRadius //.value
+          )
+          .forEach((filteredElement) => {
+            apiCallArray.push(
+              apiFunctions.fetchAPI(
+                `http://api.citybik.es/v2/networks/${filteredElement.id}`
+              )
+            );
+          });
+      }
+
+      Promise.all(apiCallArray).then((responseArrays) => {
+        let bikeStationArray = [];
+        responseArrays.forEach((networkArray) => {
+          networkArray.network.stations.forEach((bikeStation) => {
+            bikeStation.networkBrand = networkArray.network.name;
+          });
+          bikeStationArray = bikeStationArray.concat(
+            networkArray.network.stations
+          );
+        });
+
+        bikeStationArray.forEach((bikeStation) => {
+          bikeStation.userDistance = coordinateDistanceCalc(
+            bikeStation.latitude,
+            bikeStation.longitude,
+            userData.latitude,
+            userData.longitude
+          );
+        });
+
+        // console.log(bikeStationArray);
+        const formattedBikeStationArray = formatArray(
+          bikeStationArray,
+          "userDistance",
+          userData.searchRadius
+        );
+        // console.log(formattedBikeStationArray);
+
+        if (formattedBikeStationArray.length == 0) {
+          alert(
+            "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
+          );
+          DOMSelectors.submitBtn.disabled = false;
+          DOMSelectors.resetBtn.disabled = false;
+          return;
+        } else {
+          DOMSelectors.resultTable.insertAdjacentHTML(
+            "beforeend",
+            `
         <tr>
         <th>Network Brand</th>
         <th>Location Name</th>
@@ -153,24 +166,25 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
         <th>Longitude</th>
       </tr>
       `
-        );
-
-        formattedBikeStationArray.forEach((bikeStation) => {
-          addBikeStationRow(
-            bikeStation.networkBrand,
-            bikeStation.name,
-            bikeStation.free_bikes,
-            bikeStation.empty_slots,
-            bikeStation.userDistance,
-            bikeStation.latitude,
-            bikeStation.longitude
           );
-        });
-      }
-    });
 
-    DOMSelectors.submitBtn.disabled = false;
-    DOMSelectors.resetBtn.disabled = false;
+          formattedBikeStationArray.forEach((bikeStation) => {
+            addBikeStationRow(
+              bikeStation.networkBrand,
+              bikeStation.name,
+              bikeStation.free_bikes,
+              bikeStation.empty_slots,
+              bikeStation.userDistance,
+              bikeStation.latitude,
+              bikeStation.longitude
+            );
+          });
+        }
+      });
+
+      DOMSelectors.submitBtn.disabled = false;
+      DOMSelectors.resetBtn.disabled = false;
+    }
   });
 });
 

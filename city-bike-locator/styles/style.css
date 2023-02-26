@@ -1,0 +1,29 @@
+th,
+td {
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
+  padding: 5px;
+}
+
+tr:hover {
+  background-color: rgb(215, 215, 215);
+}
+
+#user-inputs {
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  padding: 10px;
+  margin-bottom: 25px;
+}
+
+#data-source-credit {
+  text-align: center;
+  width: 100%;
+  border-color: black;
+  border-width: 1px;
+  border-style: dotted;
+  font-size: 17.5px;
+}
