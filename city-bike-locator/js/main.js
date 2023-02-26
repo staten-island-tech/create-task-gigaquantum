@@ -51,10 +51,37 @@ DOMSelectors.resetBtn.addEventListener("click", function () {
   resetInputFields();
 });
 
+function addBikeStationRow(
+  networkBrand,
+  locationName,
+  availableBikes,
+  emptyBikeSlots,
+  distanceFromUser,
+  latitude,
+  longitude
+) {
+  DOMSelectors.resultTable.insertAdjacentHTML(
+    "beforeend",
+    `
+    <tr>
+        <td>${networkBrand}</td>
+        <td>${locationName}</td>
+        <td>${availableBikes}</td>
+        <td>${emptyBikeSlots}</td>
+        <td>${distanceFromUser}</td>
+        <td>${latitude}</td>
+        <td>${longitude}</td>
+      </tr>
+  `
+  );
+}
+
 // ----------------------------------------------------------------------------
 
 import "../styles/style.css";
 import { apiFunctions } from "./functions";
+
+resetInputFields();
 
 apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
   DOMSelectors.submitBtn.addEventListener("click", function () {
@@ -64,9 +91,9 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
     DOMSelectors.resultTable.childNodes.forEach((child) => child.remove());
 
     if (
-      DOMSelectors.userLatitude.value == null ||
-      DOMSelectors.userLongitude.value == null ||
-      DOMSelectors.searchRadius.value == null
+      DOMSelectors.userLatitude.value == 0 ||
+      DOMSelectors.userLongitude.value == 0 ||
+      DOMSelectors.searchRadius.value == 0
     ) {
       alert("Please fill out all input fields and try again.");
       DOMSelectors.submitBtn.disabled = false;
@@ -187,30 +214,3 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
     }
   });
 });
-
-// console.log(sortedArray);
-
-function addBikeStationRow(
-  networkBrand,
-  locationName,
-  availableBikes,
-  emptyBikeSlots,
-  distanceFromUser,
-  latitude,
-  longitude
-) {
-  DOMSelectors.resultTable.insertAdjacentHTML(
-    "beforeend",
-    `
-    <tr>
-        <td>${networkBrand}</td>
-        <td>${locationName}</td>
-        <td>${availableBikes}</td>
-        <td>${emptyBikeSlots}</td>
-        <td>${distanceFromUser}</td>
-        <td>${latitude}</td>
-        <td>${longitude}</td>
-      </tr>
-  `
-  );
-}
