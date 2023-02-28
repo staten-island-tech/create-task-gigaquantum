@@ -8,13 +8,13 @@ DOMSelectors.resetBtn.addEventListener("click", function () {
   dataFunctions.resetInputFields();
 });
 
-apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
-  DOMSelectors.submitBtn.addEventListener("click", function () {
-    DOMSelectors.submitBtn.disabled = true;
-    DOMSelectors.resetBtn.disabled = true;
+DOMSelectors.submitBtn.addEventListener("click", function () {
+  DOMSelectors.submitBtn.disabled = true;
+  DOMSelectors.resetBtn.disabled = true;
 
-    document.querySelectorAll("tbody").forEach((element) => element.remove());
+  document.querySelectorAll("tbody").forEach((element) => element.remove());
 
+  apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
     if (
       DOMSelectors.userLatitude.value == 0 ||
       DOMSelectors.userLongitude.value == 0 ||
