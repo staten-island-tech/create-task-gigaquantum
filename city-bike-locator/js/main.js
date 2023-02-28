@@ -88,7 +88,7 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
     DOMSelectors.submitBtn.disabled = true;
     DOMSelectors.resetBtn.disabled = true;
 
-    DOMSelectors.resultTable.childNodes.forEach((child) => child.remove());
+    document.querySelectorAll("tbody").forEach((element) => element.remove());
 
     if (
       DOMSelectors.userLatitude.value == 0 ||
@@ -121,10 +121,13 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
       });
 
       let apiCallArray = [];
+      // console.log(userData.extendedSearchRadius);
 
       if (
         data.networks.filter(
-          (element) => element.location.userDistance <= userData.searchRadius
+          (element) =>
+            element.location.userDistance <= userData.searchRadius + 50
+          /* Adds 50KM so if the center of the Bike Station Network is farther than the closest Bike station in that network, the program will still list it.*/
         ).length == 0
       ) {
         alert(
@@ -136,7 +139,8 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
       } else {
         data.networks
           .filter(
-            (element) => element.location.userDistance <= userData.searchRadius //+ 50
+            (element) =>
+              element.location.userDistance <= userData.searchRadius + 50
             /* Adds 50KM so if the center of the Bike Station Network is farther than the closest Bike station in that network, the program will still list it.*/
           )
           .forEach((filteredElement) => {
