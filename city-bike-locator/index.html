@@ -31,8 +31,16 @@
         id="longitude-input"
       />
       <br /><br />
-      <label for="distance-input">Search Radius (in Kilometers):</label>
-      <input type="number" min="0" name="distance-input" id="distance-input" />
+      <label for="distance-input"
+        >Search Radius (in Kilometers - Maximum 1000 KM):</label
+      >
+      <input
+        type="number"
+        min="0"
+        max="1000"
+        name="distance-input"
+        id="distance-input"
+      />
       <br />
       <button class="btn" id="submit-btn">Submit</button>
       <button class="btn" id="reset-btn">Reset</button>
