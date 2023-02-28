@@ -107,9 +107,11 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
       return;
     } else {
       let userData = {};
-      userData.latitude = DOMSelectors.userLatitude.value;
-      userData.longitude = DOMSelectors.userLongitude.value;
-      userData.searchRadius = DOMSelectors.searchRadius.value;
+      userData.latitude = Number(DOMSelectors.userLatitude.value);
+      userData.longitude = Number(DOMSelectors.userLongitude.value);
+      userData.searchRadius = Number(DOMSelectors.searchRadius.value);
+
+      console.log(userData.searchRadius);
 
       data.networks.forEach((element) => {
         element.location.userDistance = coordinateDistanceCalc(
@@ -198,7 +200,7 @@ apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
         <th>Empty Bike Slots</th>
         <th>
           Distance From <br />
-          Your Location
+          Your Location (KM)
         </th>
         <th>Latitude</th>
         <th>Longitude</th>
