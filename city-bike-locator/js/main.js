@@ -2,8 +2,6 @@ import "../styles/style.css";
 import { DOMSelectors } from "./DOMSelectors";
 import { apiFunctions, dataFunctions } from "./functions";
 
-//security.mixed_content.upgrade_display_content; // Stops the browser from blocking requests from HTTP APIs (This program uses an HTTP API)
-
 dataFunctions.resetInputFields();
 
 DOMSelectors.resetBtn.addEventListener("click", function () {
@@ -16,7 +14,7 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
 
   document.querySelectorAll("tbody").forEach((element) => element.remove());
 
-  apiFunctions.fetchAPI("http://api.citybik.es/v2/networks").then((data) => {
+  apiFunctions.fetchAPI("https://api.citybik.es/v2/networks").then((data) => {
     if (
       DOMSelectors.userLatitude.value == 0 ||
       DOMSelectors.userLongitude.value == 0 ||
@@ -72,7 +70,7 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
           .forEach((filteredElement) => {
             apiCallArray.push(
               apiFunctions.fetchAPI(
-                `http://api.citybik.es/v2/networks/${filteredElement.id}`
+                `https://api.citybik.es/v2/networks/${filteredElement.id}`
               )
             );
           });
