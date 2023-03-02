@@ -2,6 +2,8 @@ import "../styles/style.css";
 import { DOMSelectors } from "./DOMSelectors";
 import { apiFunctions, dataFunctions } from "./functions";
 
+security.mixed_content.upgrade_display_content; // Stops the browser from blocking requests from HTTP APIs (This program uses an HTTP API)
+
 dataFunctions.resetInputFields();
 
 DOMSelectors.resetBtn.addEventListener("click", function () {
