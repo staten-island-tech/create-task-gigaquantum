@@ -26,7 +26,7 @@ const dataFunctions = {
       )
       .forEach((filteredElement) => {
         apiFunctions
-          .fetchAPI(`http://api.citybik.es/v2/networks/${filteredElement.id}`)
+          .fetchAPI(`https://api.citybik.es/v2/networks/${filteredElement.id}`)
           .then((newData) => {
             console.log(newData);
             bikeStationArray = bikeStationArray.concat(newData);
