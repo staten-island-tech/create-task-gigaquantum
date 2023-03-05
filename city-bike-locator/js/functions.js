@@ -19,23 +19,6 @@ const apiFunctions = {
 };
 
 const dataFunctions = {
-  getAPIDataFromArray: async function (data) {
-    data
-      .filter(
-        (element) => element.location.userDistance <= DOMSelectors.searchRadius //.value
-      )
-      .forEach((filteredElement) => {
-        apiFunctions
-          .fetchAPI(`https://api.citybik.es/v2/networks/${filteredElement.id}`)
-          .then((newData) => {
-            console.log(newData);
-            bikeStationArray = bikeStationArray.concat(newData);
-          });
-      })
-      .then((bikeStationArray) => {
-        console.log(bikeStationArray);
-      });
-  },
   coordinateDistanceCalc: function (
     latCoordA,
     longCoordA,
