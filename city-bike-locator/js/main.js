@@ -14,23 +14,46 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
 
   document.querySelectorAll("tbody").forEach((element) => element.remove());
 
-  apiFunctions.fetchAPI("https://api.citybik.es/v2/networks").then((data) => {
-    if (
-      DOMSelectors.userLatitude.value == 0 ||
-      DOMSelectors.userLongitude.value == 0 ||
-      DOMSelectors.searchRadius.value == 0
-    ) {
-      if (DOMSelectors.searchRadius.value == 0) {
-        alert(
-          "Please fill out all input fields and ensure the search radius is greater than 0, then try again."
-        );
-      } else {
-        alert("Please fill out all input fields and try again.");
-      }
-      DOMSelectors.submitBtn.disabled = false;
-      DOMSelectors.resetBtn.disabled = false;
-      return;
-    } else {
+  if (
+    DOMSelectors.userLatitude.value == undefined ||
+    DOMSelectors.userLongitude.value == undefined ||
+    DOMSelectors.searchRadius.value == 0
+  ) {
+    alert(
+      "Please fill out all input fields and ensure the search radius is between 0 and 1000, then try again."
+    );
+    DOMSelectors.submitBtn.disabled = false;
+    DOMSelectors.resetBtn.disabled = false;
+    return;
+  } else if (DOMSelectors.searchRadius.value > 1000) {
+    alert(
+      "Search Radius cannot be greater than 1000 KM. Please reduce the Search Radius to below 1000 Km and try again."
+    );
+    DOMSelectors.submitBtn.disabled = false;
+    DOMSelectors.resetBtn.disabled = false;
+    return;
+  } else if (
+    DOMSelectors.userLatitude.value > 90 ||
+    DOMSelectors.userLatitude.value < -90
+  ) {
+    alert(
+      "Latitude cannot be greater than 90 or less than -90. Please ensure the Latitude is in-range and try again."
+    );
+    DOMSelectors.submitBtn.disabled = false;
+    DOMSelectors.resetBtn.disabled = false;
+    return;
+  } else if (
+    DOMSelectors.userLongitude.value > 180 ||
+    DOMSelectors.userLongitude.value < -180
+  ) {
+    alert(
+      "Longitude cannot be greater than 180 or less than -180. Please ensure the Longitude is in-range and try again."
+    );
+    DOMSelectors.submitBtn.disabled = false;
+    DOMSelectors.resetBtn.disabled = false;
+    return;
+  } else {
+    apiFunctions.fetchAPI("https://api.citybik.es/v2/networks").then((data) => {
       let userData = {};
       userData.latitude = Number(DOMSelectors.userLatitude.value);
       userData.longitude = Number(DOMSelectors.userLongitude.value);
@@ -144,6 +167,6 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
 
       DOMSelectors.submitBtn.disabled = false;
       DOMSelectors.resetBtn.disabled = false;
-    }
-  });
+    });
+  }
 });

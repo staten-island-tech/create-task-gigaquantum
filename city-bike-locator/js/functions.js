@@ -74,7 +74,7 @@ const dataFunctions = {
   },
   resetInputFields: function () {
     DOMSelectors.inputElements.forEach((element) => {
-      element.value = null;
+      element.value = 0;
     });
   },
   addBikeStationRow: function (
