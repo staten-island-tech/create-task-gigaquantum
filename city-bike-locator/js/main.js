@@ -27,7 +27,7 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
     return;
   } else if (DOMSelectors.searchRadius.value > 1000) {
     alert(
-      "Search Radius cannot be greater than 1000 KM. Please reduce the Search Radius to below 1000 Km and try again."
+      "Search Radius cannot be greater than 1000 KM. Please reduce the Search Radius to below 1000 KM and try again."
     );
     DOMSelectors.submitBtn.disabled = false;
     DOMSelectors.resetBtn.disabled = false;
