@@ -20,45 +20,34 @@ const apiFunctions = {
 
 const dataFunctions = {
   coordinateDistanceCalc: function (
-    array,
-    targetProperty,
-    latProperty,
-    longProperty,
-    userLat,
-    userLong,
-    radius
+    latCoordA,
+    longCoordA,
+    latCoordB,
+    longCoordB
   ) {
-    if (radius <= 0) {
-      console.log(
-        "coordinateDistanceCalc: Invalid radius. Radius must be greater than 0"
-      );
-    } else {
-      console.log(array);
-      array.forEach((item) => {
-        console.log(item);
-        console.log(item["location.latitude"]);
-        // Average Radius of the Earth (in Kilometers) = 6371
-        // Converting the coordinates to Radians
-        const radianLatCoordA = item[latProperty] * (Math.PI / 180);
-        const radianLatCoordB = userLat * (Math.PI / 180);
-        const radianLongCoordA = item[longProperty] * (Math.PI / 180);
-        const radianLongCoordB = userLong * (Math.PI / 180);
+    // Average Radius of the Earth (in Kilometers)
+    const radius = 6371;
 
-        // Haversine Formula
-        const distance =
-          2 *
-          radius *
-          Math.asin(
-            Math.sqrt(
-              Math.sin((radianLatCoordB - radianLatCoordA) / 2) ** 2 +
-                Math.cos(radianLatCoordA) *
-                  Math.cos(radianLatCoordB) *
-                  Math.sin((radianLongCoordB - radianLongCoordA) / 2) ** 2
-            )
-          );
-        item[targetProperty] = distance;
-      });
-    }
+    // Converting the coordinates to Radians
+    latCoordA = latCoordA * (Math.PI / 180);
+    latCoordB = latCoordB * (Math.PI / 180);
+    longCoordA = longCoordA * (Math.PI / 180);
+    longCoordB = longCoordB * (Math.PI / 180);
+
+    // Haversine Formula
+    const distance =
+      2 *
+      radius *
+      Math.asin(
+        Math.sqrt(
+          Math.sin((latCoordB - latCoordA) / 2) ** 2 +
+            Math.cos(latCoordA) *
+              Math.cos(latCoordB) *
+              Math.sin((longCoordB - longCoordA) / 2) ** 2
+        )
+      );
+
+    return distance;
   },
   formatArray: function (array, property, radius) {
     const sortedArray = array
