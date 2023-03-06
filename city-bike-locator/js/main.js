@@ -59,16 +59,17 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
       userData.longitude = Number(DOMSelectors.userLongitude.value);
       userData.searchRadius = Number(DOMSelectors.searchRadius.value);
 
-      data.networks.forEach((element) => {
-        element.location.userDistance = dataFunctions.coordinateDistanceCalc(
-          element.location.latitude,
-          element.location.longitude,
-          userData.latitude,
-          userData.longitude
-        );
-      });
+      dataFunctions.coordinateDistanceCalc(
+        data.networks,
+        "location.userDistance",
+        "location.latitude",
+        "location.longitude",
+        userData.latitude,
+        userData.longitude,
+        6371 // Average Radius of the Earth (in Kilometers) = 6371
+      );
 
-      let apiCallArray = [];
+      data.networks.forEach((e) => console.log(e.location.userDistance));
 
       if (
         data.networks.filter(
@@ -84,6 +85,7 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
         DOMSelectors.resetBtn.disabled = false;
         return;
       } else {
+        let apiCallArray = [];
         data.networks
           .filter(
             (element) =>
@@ -110,14 +112,26 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
           );
         });
 
-        bikeStationArray.forEach((bikeStation) => {
+        /*bikeStationArray.forEach((bikeStation) => {
           bikeStation.userDistance = dataFunctions.coordinateDistanceCalc(
             bikeStation.latitude,
             bikeStation.longitude,
             userData.latitude,
             userData.longitude
           );
-        });
+        });*/
+
+        dataFunctions.coordinateDistanceCalc(
+          bikeStationArray,
+          "userDistance",
+          "latitude",
+          "longitude",
+          userData.latitude,
+          userData.longitude,
+          6371 // Average Radius of the Earth (in Kilometers) = 6371
+        );
+
+        console.log(bikeStationArray);
 
         const formattedBikeStationArray = dataFunctions.formatArray(
           bikeStationArray,
@@ -164,7 +178,6 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
           });
         }
       });
-
       DOMSelectors.submitBtn.disabled = false;
       DOMSelectors.resetBtn.disabled = false;
     });
