@@ -68,8 +68,6 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
         );
       });
 
-      let apiCallArray = [];
-
       if (
         data.networks.filter(
           (element) =>
@@ -84,11 +82,14 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
         DOMSelectors.resetBtn.disabled = false;
         return;
       } else {
+        let apiCallArray = [];
         data.networks
           .filter(
             (element) =>
               element.location.userDistance <= userData.searchRadius + 50
-            /* Adds 50KM so if the center of the Bike Station Network is farther than the closest Bike station in that network, the program will still list it.*/
+            /* Adds 50KM so if the center of the Bike Station Network is 
+            farther than the closest Bike station in that network, the program 
+            will still list it.*/
           )
           .forEach((filteredElement) => {
             apiCallArray.push(
