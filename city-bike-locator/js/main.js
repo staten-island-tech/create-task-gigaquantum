@@ -68,12 +68,12 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
         );
       });
 
-      /* Adds 50KM to the search radius so if the center of the Bike Station Network is farther 
-      than the closest Bike station in that network, the program will still list it.*/
       dataFunctions.formatAndCheckArray(
         data.networks,
         "userDistance",
         userData.searchRadius + 50,
+        /* Adds 50KM to the search radius so if the center of the Bike Station Network is farther 
+      than the closest Bike station in that network, the program will still list it.*/
         "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
       );
 
