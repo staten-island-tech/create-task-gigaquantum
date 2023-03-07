@@ -50,16 +50,16 @@ const dataFunctions = {
     return distance;
   },
   formatAndCheckArray: function (array, property, radius, invalidMessage) {
-    const sortedArray = array
+    const formattedArray = array
       .sort((a, b) => a[property] - b[property])
       .filter((element) => element[property] <= radius);
-    if (sortedArray.length == 0) {
+    if (formattedArray.length == 0) {
       alert(invalidMessage);
       DOMSelectors.submitBtn.disabled = false;
       DOMSelectors.resetBtn.disabled = false;
       throw `Program Execution Ended: ${invalidMessage}`;
     } else {
-      return sortedArray;
+      return formattedArray;
     }
   },
   resetInputFields: function () {
