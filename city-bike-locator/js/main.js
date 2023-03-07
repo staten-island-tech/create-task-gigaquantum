@@ -60,7 +60,7 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
       userData.searchRadius = Number(DOMSelectors.searchRadius.value);
 
       data.networks.forEach((element) => {
-        element.location.userDistance = dataFunctions.coordinateDistanceCalc(
+        element.userDistance = dataFunctions.coordinateDistanceCalc(
           element.location.latitude,
           element.location.longitude,
           userData.latitude,
@@ -68,38 +68,30 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
         );
       });
 
+      /* Adds 50KM to the search radius so if the center of the Bike Station Network is farther 
+      than the closest Bike station in that network, the program will still list it.*/
+      dataFunctions.formatAndCheckArray(
+        data.networks,
+        "userDistance",
+        userData.searchRadius + 50,
+        "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
+      );
+
       let apiCallArray = [];
-      if (
-        data.networks.filter(
-          (element) =>
-            element.location.userDistance <= userData.searchRadius + 50
-          /* Adds 50KM so if the center of the Bike Station Network is farther 
-          than the closest Bike station in that network, the program will still list it.*/
-        ).length == 0
-      ) {
-        alert(
-          "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
-        );
-        DOMSelectors.submitBtn.disabled = false;
-        DOMSelectors.resetBtn.disabled = false;
-        return;
-      } else {
-        data.networks
-          .filter(
-            (element) =>
-              element.location.userDistance <= userData.searchRadius + 50
-            /* Adds 50KM so if the center of the Bike Station Network is 
+      data.networks
+        .filter(
+          (element) => element.userDistance <= userData.searchRadius + 50
+          /* Adds 50KM so if the center of the Bike Station Network is 
             farther than the closest Bike station in that network, the program 
             will still list it.*/
-          )
-          .forEach((filteredElement) => {
-            apiCallArray.push(
-              apiFunctions.fetchAPI(
-                `https://api.citybik.es/v2/networks/${filteredElement.id}`
-              )
-            );
-          });
-      }
+        )
+        .forEach((filteredElement) => {
+          apiCallArray.push(
+            apiFunctions.fetchAPI(
+              `https://api.citybik.es/v2/networks/${filteredElement.id}`
+            )
+          );
+        });
       Promise.all(apiCallArray).then((responseArrays) => {
         let bikeStationArray = [];
         responseArrays.forEach((networkArray) => {
@@ -120,23 +112,16 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
           );
         });
 
-        const formattedBikeStationArray = dataFunctions.formatArray(
+        const formattedBikeStationArray = dataFunctions.formatAndCheckArray(
           bikeStationArray,
           "userDistance",
-          userData.searchRadius
+          userData.searchRadius,
+          "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
         );
 
-        if (formattedBikeStationArray.length == 0) {
-          alert(
-            "Sorry, there are no bike stations within the entered search radius. Increase the search radius and try again."
-          );
-          DOMSelectors.submitBtn.disabled = false;
-          DOMSelectors.resetBtn.disabled = false;
-          return;
-        } else {
-          DOMSelectors.resultTable.insertAdjacentHTML(
-            "beforeend",
-            `
+        DOMSelectors.resultTable.insertAdjacentHTML(
+          "beforeend",
+          `
         <tr>
         <th>Network Brand</th>
         <th>Location Name</th>
@@ -148,24 +133,22 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
         </th>
         <th>Latitude</th>
         <th>Longitude</th>
-      </tr>
-      `
+        </tr>
+        `
+        );
+
+        formattedBikeStationArray.forEach((bikeStation) => {
+          dataFunctions.addBikeStationRow(
+            bikeStation.networkBrand,
+            bikeStation.name,
+            bikeStation.free_bikes,
+            bikeStation.empty_slots,
+            bikeStation.userDistance,
+            bikeStation.latitude,
+            bikeStation.longitude
           );
-
-          formattedBikeStationArray.forEach((bikeStation) => {
-            dataFunctions.addBikeStationRow(
-              bikeStation.networkBrand,
-              bikeStation.name,
-              bikeStation.free_bikes,
-              bikeStation.empty_slots,
-              bikeStation.userDistance,
-              bikeStation.latitude,
-              bikeStation.longitude
-            );
-          });
-        }
+        });
       });
-
       DOMSelectors.submitBtn.disabled = false;
       DOMSelectors.resetBtn.disabled = false;
     });

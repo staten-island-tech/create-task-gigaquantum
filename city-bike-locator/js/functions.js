@@ -49,11 +49,18 @@ const dataFunctions = {
 
     return distance;
   },
-  formatArray: function (array, property, radius) {
+  formatAndCheckArray: function (array, property, radius, invalidMessage) {
     const sortedArray = array
       .sort((a, b) => a[property] - b[property])
       .filter((element) => element[property] <= radius);
-    return sortedArray;
+    if (sortedArray.length == 0) {
+      alert(invalidMessage);
+      DOMSelectors.submitBtn.disabled = false;
+      DOMSelectors.resetBtn.disabled = false;
+      throw `Program Execution Ended: ${invalidMessage}`;
+    } else {
+      return sortedArray;
+    }
   },
   resetInputFields: function () {
     DOMSelectors.inputElements.forEach((element) => {
