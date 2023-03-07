@@ -100,7 +100,6 @@ DOMSelectors.submitBtn.addEventListener("click", function () {
             );
           });
       }
-
       Promise.all(apiCallArray).then((responseArrays) => {
         let bikeStationArray = [];
         responseArrays.forEach((networkArray) => {
