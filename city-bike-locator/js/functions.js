@@ -50,15 +50,20 @@ const dataFunctions = {
     return distance;
   },
   formatAndCheckArray: function (array, property, radius, invalidMessage) {
-    const formattedArray = array
-      .sort((a, b) => a[property] - b[property])
-      .filter((element) => element[property] <= radius);
+    let formattedArray = [];
+    array.forEach((element) => {
+      if (element[property] <= radius) {
+        formattedArray.push(element);
+      }
+    });
+
     if (formattedArray.length == 0) {
       alert(invalidMessage);
       DOMSelectors.submitBtn.disabled = false;
       DOMSelectors.resetBtn.disabled = false;
       throw `Program Execution Ended: ${invalidMessage}`;
     } else {
+      formattedArray = formattedArray.sort((a, b) => a[property] - b[property]);
       return formattedArray;
     }
   },
